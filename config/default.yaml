@@ -1,0 +1,11 @@
+%YAML 1.1
+---
+
+rgb_high_topic: "/camera/high/image_raw"
+rgb_left_topic: "/camera/left_wrist/image_raw"
+rgb_right_topic: "/camera/right_wrist/image_raw"
+left_joint_states_topic: "/arm1/joint_states"
+right_joint_states_topic: "/arm2/joint_states"
+path_to_save: "/home/dknt/Project/rdt/hdf5_demo/data/my_episode.hdf5"
+
+# TODO: We use dual-arm robot. Synchronize the joint states of two arms.
