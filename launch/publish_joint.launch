@@ -1,0 +1,6 @@
+<launch>
+  <rosparam command="load" file="$(find manipulation_recorder)/config/default.yaml" />
+
+  <node pkg="manipulation_recorder" type="joint_state_publisher" name="joint_state_publisher" output="screen" />
+  <node pkg="manipulation_recorder" type="image_pub_test" name="image_pub_test" output="screen" />
+</launch>

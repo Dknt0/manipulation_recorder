@@ -53,7 +53,7 @@ class Hdf5Recorder {
   bool VectorBufferToDataSet(H5File& base_file, std::string const dataset_name,
                              std::list<Eigen::MatrixXd>& list_vector);
 
- private:
+ public:
   size_t q_size_;
 
   size_t num_record_;

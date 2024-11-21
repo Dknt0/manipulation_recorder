@@ -11,9 +11,9 @@ void Hdf5Recorder::SetInstruction(std::string const ins) {
 void Hdf5Recorder::PushImgHigh(
     cv::Mat const& color,
     std::optional<std::reference_wrapper<cv::Mat const>> depth) {
-  this->list_color_high_.push_back(color);
+  this->list_color_high_.push_back(color.clone());
   if (depth.has_value()) {
-    this->list_depth_high_.push_back(depth.value().get());
+    this->list_depth_high_.push_back(depth.value().get().clone());
   }
   this->num_record_ = std::max(this->num_record_, list_color_high_.size());
 }
@@ -21,9 +21,9 @@ void Hdf5Recorder::PushImgHigh(
 void Hdf5Recorder::PushImgLeftWrist(
     cv::Mat const& color,
     std::optional<std::reference_wrapper<cv::Mat const>> depth) {
-  this->list_color_left_wrist_.push_back(color);
+  this->list_color_left_wrist_.push_back(color.clone());
   if (depth.has_value()) {
-    this->list_depth_left_wrist_.push_back(depth.value().get());
+    this->list_depth_left_wrist_.push_back(depth.value().get().clone());
   }
   this->num_record_ =
       std::max(this->num_record_, list_color_left_wrist_.size());
@@ -32,9 +32,9 @@ void Hdf5Recorder::PushImgLeftWrist(
 void Hdf5Recorder::PushImgRightWrist(
     cv::Mat const& color,
     std::optional<std::reference_wrapper<cv::Mat const>> depth) {
-  this->list_color_right_wrist_.push_back(color);
+  this->list_color_right_wrist_.push_back(color.clone());
   if (depth.has_value()) {
-    this->list_depth_right_wrist_.push_back(depth.value().get());
+    this->list_depth_right_wrist_.push_back(depth.value().get().clone());
   }
   this->num_record_ =
       std::max(this->num_record_, list_color_right_wrist_.size());
@@ -42,29 +42,47 @@ void Hdf5Recorder::PushImgRightWrist(
 
 void Hdf5Recorder::PushAction(Eigen::MatrixXd const& mat) {
   this->list_action_.push_back(mat);
+  this->num_record_ = std::max(this->num_record_, list_action_.size());
 }
 
 void Hdf5Recorder::PushEffort(Eigen::MatrixXd const& mat) {
   this->list_effort_.push_back(mat);
+  this->num_record_ = std::max(this->num_record_, list_effort_.size());
 }
 
 void Hdf5Recorder::PushQPos(Eigen::MatrixXd const& mat) {
   this->list_qpos_.push_back(mat);
+  this->num_record_ = std::max(this->num_record_, list_qpos_.size());
 }
 
 void Hdf5Recorder::PushQVel(Eigen::MatrixXd const& mat) {
   this->list_qvel_.push_back(mat);
+  this->num_record_ = std::max(this->num_record_, list_qvel_.size());
 }
 
 bool Hdf5Recorder::SaveToFile(std::string const& path) {
   // Check size
-  if (this->num_record_ != this->list_action_.size() ||
-      this->num_record_ != this->list_effort_.size() ||
-      this->num_record_ != this->list_qpos_.size()) {
-    std::cout << "Error size. Some vectors may be wrongly recorded."
-              << std::endl;
-    return false;
+  if (this->num_record_ == this->list_color_high_.size()) {
+    std::cout << "Saving color image high." << std::endl;
+  } else {
+    std::cout << "Color image high is not saved." << std::endl;
   }
+  if (this->num_record_ == this->list_color_left_wrist_.size()) {
+    std::cout << "Saving color image left wrist." << std::endl;
+  } else {
+    std::cout << "Color image left wrist is not saved." << std::endl;
+  }
+  if (this->num_record_ == this->list_color_right_wrist_.size()) {
+    std::cout << "Saving color image right wrist." << std::endl;
+  } else {
+    std::cout << "Color image right wrist is not saved." << std::endl;
+  }
+  if (this->num_record_ == this->list_qpos_.size()) {
+    std::cout << "Saving qpos." << std::endl;
+  } else {
+    std::cout << "qpos is not saved." << std::endl;
+  }
+  std::cout << "Saving to file: " << path << std::endl;
 
   /// Save to file
   H5File h5_file(path, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
@@ -118,6 +136,7 @@ bool Hdf5Recorder::ImageBufferToDataSet(Group& base_group,
   std::vector<std::vector<uchar>> vec_img_encoded(this->num_record_);
   std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 95};
   size_t max_string_len = 0;
+
   for (size_t i = 0; i < this->num_record_; ++i) {
     auto img = list_img.front();
     // Encode the image to JPEG format

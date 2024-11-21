@@ -1,0 +1,4 @@
+<launch>
+  <rosparam command="load" file="$(find manipulation_recorder)/config/default.yaml" />
+  <node pkg="manipulation_recorder" type="ros_recorder" name="ros_recorder" output="screen" />
+</launch>

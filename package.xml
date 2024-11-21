@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>hdf5_recorder</name>
+  <name>manipulation_recorder</name>
   <version>0.0.1</version>
-  <description>A package for recording and reading HDF5 files with ROS integration</description>
+  <description>A package for recording manipulation data with ROS integration</description>
 
   <maintainer email="your_email@example.com">Your Name</maintainer>
   <license>TODO</license>
